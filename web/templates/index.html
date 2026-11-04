@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% set active_page = "dashboard" %}
+{% block page_heading %}አጠቃላይ የስርዓት ዳሽቦርድ{% endblock %}
+
+{% block content %}
+<div class="grid-cards">
+    <div class="stat-card">
+        <span class="stat-title">የዓመቱ ቀናት ድምር</span>
+        <span class="stat-value">{{ stats.expected_days }}</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ 'ሰግር ዓመት (366 ቀናት)' if stats.is_leap else 'መደበኛ ዓመት (365 ቀናት)' }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-title">የተሟሉ ምስሎች</span>
+        <span class="stat-value" style="color: var(--primary);">{{ stats.with_image }} / {{ stats.expected_days }}</span>
+        <span style="font-size: 0.8rem; color: var(--success);"><i class="fa-solid fa-circle-check"></i> {{ '100% ተሟልቷል' if stats.missing_images == 0 else stats.missing_images ~ ' ይቀራሉ' }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-title">የገቡ ጽሑፎች</span>
+        <span class="stat-value" style="color: #7c3aed;">{{ stats.with_text }} / {{ stats.expected_days }}</span>
+        <span style="font-size: 0.8rem; color: var(--warning);"><i class="fa-solid fa-file-lines"></i> {{ stats.with_text }} ቀናት ተመዝግበዋል</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-title">የታተሙ ቀናት</span>
+        <span class="stat-value" style="color: var(--success);">{{ stats.published_count }}</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-paper-plane"></i> በቴሌግራም ቻናል የታተሙ</span>
+    </div>
+</div>
+
+<!-- Quick Actions & Today's Preview -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 32px;">
+    <!-- Today's Card -->
+    <div style="background: #fff; padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700;">📖 የዛሬው ዕለት ስንክሳር ({{ today_str }})</h3>
+            <div style="display: flex; gap: 10px;">
+                <form action="/publish-today" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('የዛሬውን ስንክሳር አሁን በቀጥታ ወደ ቴሌግራም ቻናል ማተም ይፈልጋሉ?');">
+                        <i class="fa-solid fa-paper-plane"></i> አሁን አትም (Publish Now)
+                    </button>
+                </form>
+                <form action="/toggle-pause" method="POST" style="display: inline;">
+                    <button type="submit" class="btn {% if is_paused %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fa-solid {% if is_paused %}fa-play{% else %}fa-pause{% endif %}"></i> 
+                        {{ 'ህትመትን አስጀምር' if is_paused else 'ህትመትን አቁም' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if today_content %}
+        <div style="display: flex; gap: 24px; align-items: flex-start;">
+            {% if today_content.image_path %}
+            <img src="/image/{{ today_year }}/{{ today_month }}/{{ today_day }}" 
+                 alt="የዛሬ ምስል" 
+                 style="width: 180px; height: 240px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
+            {% else %}
+            <div style="width: 180px; height: 240px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.9rem;">
+                ምስል የለም
+            </div>
+            {% endif %}
+
+            <div style="flex: 1;">
+                <h4 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 8px;">{{ today_content.title or today_str }}</h4>
+                <div style="background: #f8fafc; padding: 14px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6; max-height: 200px; overflow-y: auto; white-space: pre-wrap; border: 1px solid var(--border);">
+                    {{ today_content.amharic_text or 'ይዘት አልተሞላም' }}
+                </div>
+                <div style="margin-top: 14px;">
+                    <a href="/edit/{{ today_month }}/{{ today_day }}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.85rem;">
+                        <i class="fa-solid fa-pen-to-square"></i> ይዘቱን አርትዕ (Edit)
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div style="padding: 30px; text-align: center; color: var(--text-muted);">
+            <i class="fa-solid fa-triangle-exclamation fa-2x" style="color: var(--warning); margin-bottom: 12px;"></i>
+            <p>ለዛሬው ቀን ({{ today_str }}) የተመዘገበ ይዘት አልተገኘም!</p>
+            <a href="/edit/{{ today_month }}/{{ today_day }}" class="btn btn-primary" style="margin-top: 14px;">ይዘት ጨምር</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Publishing Status Info -->
+    <div style="background: #fff; padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;">⚙️ የህትመት ማጠቃለያ</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem;">
+                <li><b>የህትመት ሰዓት፦</b> በየቀኑ 12:00 AM (እኩለ ሌሊት)</li>
+                <li><b>የሰዓት ዞን፦</b> {{ config.TIMEZONE }}</li>
+                <li><b>ዒላማ ቻናል፦</b> <code>{{ config.CHANNEL_ID }}</code></li>
+                <li><b>የዛሬ ሁኔታ፦</b> 
+                    {% if is_published_today %}
+                    <span class="badge badge-success">ቀድሞ ታትሟል ✅</span>
+                    {% else %}
+                    <span class="badge badge-warning">ገና አልታተመም ⏳</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
+            <a href="/calendar" class="btn btn-outline" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-calendar-days"></i> ወደ ካላንደር ሂድ
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

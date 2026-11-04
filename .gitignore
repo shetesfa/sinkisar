@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+
+# Environment Variables & Secrets (CRITICAL: Never commit bot tokens!)
+.env
+.env.local
+synksar.db
+*.db
+
+# Logs and temp files
+*.log
+send_all.log
+sent_progress.json
+.trashed-*
+
+# Operating System
+.DS_Store
+Thumbs.db

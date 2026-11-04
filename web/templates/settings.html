@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% set active_page = "settings" %}
+{% block page_heading %}የስርዓት ቅንብሮች (Settings){% endblock %}
+
+{% block content %}
+<div style="background: #fff; padding: 28px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); max-width: 800px;">
+    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 20px; color: var(--primary);">
+        ⚙️ የቴሌግራም እና የህትመት ቅንብሮች
+    </h3>
+
+    <form action="/settings" method="POST">
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የቴሌግራም ቦት ቶከን (BOT_TOKEN)፦</label>
+            <input type="password" name="bot_token" value="{{ config.BOT_TOKEN }}" 
+                   placeholder="123456789:ABCDefgh..."
+                   style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">ከ @BotFather የተገኘው የቦት ሚስጥራዊ ቁጥር</span>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የቴሌግራም ቻናል መታወቂያ (CHANNEL_ID)፦</label>
+            <input type="text" name="channel_id" value="{{ config.CHANNEL_ID }}" 
+                   placeholder="@yourchannel ወይም -100xxxxxxxxxx"
+                   style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የአስተዳዳሪ ቴሌግራም IDs (በኮማ የተከፋፈሉ)፦</label>
+            <input type="text" name="admin_ids" value="{{ admin_ids_str }}" 
+                   placeholder="123456789, 987654321"
+                   style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የሰዓት ዞን (Timezone)፦</label>
+                <input type="text" name="timezone" value="{{ config.TIMEZONE }}" 
+                       style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የህትመት ሰዓት (24hr ሰዓት:ደቂቃ)፦</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" name="publish_hour" value="{{ config.PUBLISH_HOUR }}" min="0" max="23"
+                           style="width: 50%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;" placeholder="ሰዓት (0)">
+                    <input type="number" name="publish_minute" value="{{ config.PUBLISH_MINUTE }}" min="0" max="59"
+                           style="width: 50%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;" placeholder="ደቂቃ (0)">
+                </div>
+            </div>
+        </div>
+
+        <h4 style="font-size: 1rem; font-weight: 700; margin: 24px 0 16px; color: var(--primary);">
+            🔗 የማኅበራዊ ገጾች ሊንክ እና የግርጌ ጽሑፍ (የቦት ሊንክ አይካተትም!)
+        </h4>
+
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የቻናል ሊንክ (URL)፦</label>
+            <input type="text" name="channel_link_url" value="{{ config.CHANNEL_LINK_URL }}" 
+                   style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የግሩፕ ሊንክ (URL)፦</label>
+            <input type="text" name="group_link_url" value="{{ config.GROUP_LINK_URL }}" 
+                   style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የሰንበት ት/ቤት ስም (አማርኛ)፦</label>
+                <input type="text" name="sunday_school_amharic" value="{{ config.SUNDAY_SCHOOL_AMHARIC }}" 
+                       style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የሰንበት ት/ቤት ስም (እንግሊዝኛ)፦</label>
+                <input type="text" name="sunday_school_english" value="{{ config.SUNDAY_SCHOOL_ENGLISH }}" 
+                       style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">የመክፈቻ ጸሎት፦</label>
+            <input type="text" name="opening_prayer" value="{{ config.OPENING_PRAYER }}" 
+                   style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 12px 28px;">
+            <i class="fa-solid fa-floppy-disk"></i> ቅንብሮችን አስቀምጥ (Save Settings)
+        </button>
+    </form>
+</div>
+{% endblock %}

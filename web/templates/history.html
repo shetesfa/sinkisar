@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% set active_page = "history" %}
+{% block page_heading %}የህትመት ታሪክ መዝገብ (Publication History){% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>ቀን (የኢትዮጵያ)</th>
+                <th>ሁኔታ</th>
+                <th>የታተመበት ሰዓት</th>
+                <th>የመልእክት መታወቂያ</th>
+                <th>ካፕሽን ሁኔታ</th>
+                <th>ዝርዝር / ስህተት</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.id }}</td>
+                <td style="font-weight: 600;">{{ log.date_str }} ({{ log.eth_year }})</td>
+                <td>
+                    {% if log.status == 'success' %}
+                    <span class="badge badge-success"><i class="fa-solid fa-check"></i> ተሳክቷል</span>
+                    {% elif log.status == 'skipped' %}
+                    <span class="badge badge-warning"><i class="fa-solid fa-forward"></i> ተዘልሏል</span>
+                    {% else %}
+                    <span class="badge badge-danger"><i class="fa-solid fa-xmark"></i> አልተሳካም</span>
+                    {% endif %}
+                </td>
+                <td style="font-size: 0.85rem; color: var(--text-muted);">{{ log.published_at }}</td>
+                <td><code>{{ log.message_id or '-' }}</code></td>
+                <td>{{ 'በሁለት ተከፍሎ' if log.caption_truncated else 'በአንድ ላይ' }}</td>
+                <td style="font-size: 0.85rem; color: {% if log.error_message %}var(--danger){% else %}var(--text-muted){% endif %};">
+                    {{ log.error_message or 'ምንም ስህተት የለም' }}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    ምንም የተመዘገበ የህትመት ታሪክ አልተገኘም።
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

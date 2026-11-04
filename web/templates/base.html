@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ስንክሳር አውቶማቲክ አሳታሚ (Synksar Auto Publisher){% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-cross fa-2x" style="color: var(--accent);"></i>
+            <div>
+                <div class="brand-title">ስንክሳር አሳታሚ</div>
+                <div style="font-size: 0.75rem; color: #9ca3af;">Synksar Auto Publisher</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="{% if active_page == 'dashboard' %}active{% endif %}"><i class="fa-solid fa-chart-pie"></i> ዳሽቦርድ (Overview)</a></li>
+            <li><a href="/calendar" class="{% if active_page == 'calendar' %}active{% endif %}"><i class="fa-solid fa-calendar-days"></i> ካላንደር (13 ወራት)</a></li>
+            <li><a href="/upload" class="{% if active_page == 'upload' %}active{% endif %}"><i class="fa-solid fa-cloud-arrow-up"></i> ዓመታዊ ዚፕ (ZIP Upload)</a></li>
+            <li><a href="/history" class="{% if active_page == 'history' %}active{% endif %}"><i class="fa-solid fa-clock-rotate-left"></i> የህትመት ታሪክ</a></li>
+            <li><a href="/settings" class="{% if active_page == 'settings' %}active{% endif %}"><i class="fa-solid fa-sliders"></i> ቅንብሮች (Settings)</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="topbar">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <h2 style="font-size: 1.25rem; font-weight: 700;">{% block page_heading %}ዳሽቦርድ{% endblock %}</h2>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <span class="today-badge">
+                    <i class="fa-regular fa-calendar"></i> ዛሬ፦ {{ today_str }} ({{ today_year }} ዓ.ም.)
+                </span>
+                {% if is_paused %}
+                <span class="badge badge-warning"><i class="fa-solid fa-pause"></i> ህትመት ቆሟል</span>
+                {% else %}
+                <span class="badge badge-success"><i class="fa-solid fa-check"></i> ስርዓቱ ንቁ ነው</span>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="padding: 14px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: 500;
+                            {% if category == 'success' %}background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;
+                            {% elif category == 'danger' %}background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;
+                            {% else %}background: #fef3c7; color: #b45309; border: 1px solid #fde68a;{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

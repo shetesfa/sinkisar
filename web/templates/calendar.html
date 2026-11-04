@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% set active_page = "calendar" %}
+{% block page_heading %}ዓመታዊ የስንክሳር የቀን መቁጠሪያ ({{ selected_year }} ዓ.ም.){% endblock %}
+
+{% block content %}
+<!-- Month Navigation Tabs -->
+<div class="calendar-month-tabs">
+    {% for m in months %}
+    <a href="/calendar?month={{ m.index }}" class="month-tab-btn {% if m.index == selected_month %}active{% endif %}">
+        {{ m.amharic }} ({{ m.english }})
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Current Month Header -->
+<div style="background: #fff; padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary);">
+            የ{{ current_month_meta.amharic }} ወር ስንክሳር ({{ current_month_days|length }} ቀናት)
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+            አረንጓዴ = ሙሉ (ምስል + ጽሑፍ) | ቢጫ = ምስል ብቻ | ቀይ = ያልተሟላ
+        </p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+        <span class="badge badge-success">የተሟሉ: {{ month_stats.ready }}</span>
+        <span class="badge badge-warning">ምስል ብቻ: {{ month_stats.image_only }}</span>
+        <span class="badge badge-danger">ባዶ: {{ month_stats.empty }}</span>
+    </div>
+</div>
+
+<!-- Days Grid -->
+<div class="days-grid">
+    {% for day in current_month_days %}
+    <a href="/edit/{{ selected_month }}/{{ day.day }}" class="day-box {{ day.status_class }}">
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">{{ current_month_meta.amharic }}</span>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--primary);">{{ day.geez_day }}</span>
+        </div>
+        <div class="day-number">{{ day.day }}</div>
+        
+        <div style="display: flex; gap: 6px; font-size: 0.8rem; margin-top: 4px;">
+            {% if day.has_image %}
+            <span title="ምስል አለው" style="color: var(--primary);"><i class="fa-solid fa-image"></i></span>
+            {% else %}
+            <span title="ምስል የለውም" style="color: #cbd5e1;"><i class="fa-regular fa-image"></i></span>
+            {% endif %}
+
+            {% if day.has_text %}
+            <span title="ጽሑፍ አለው" style="color: var(--success);"><i class="fa-solid fa-file-lines"></i></span>
+            {% else %}
+            <span title="ጽሑፍ የለውም" style="color: #cbd5e1;"><i class="fa-regular fa-file-lines"></i></span>
+            {% endif %}
+
+            {% if day.is_published %}
+            <span title="ታትሟል" style="color: var(--accent);"><i class="fa-solid fa-circle-check"></i></span>
+            {% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
