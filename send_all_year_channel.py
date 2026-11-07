@@ -47,7 +47,7 @@ def log_progress(msg: str):
 def send_entire_year(target_chat_id: str = None):
     chat_id = target_chat_id or config.CHANNEL_ID
     bot_token = config.BOT_TOKEN
-    target_year = 2018
+    target_year = 2019
 
     sent_progress = load_sent_progress()
 
